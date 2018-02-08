@@ -121,7 +121,7 @@ def get_pages(token, page_ids, concat=False):
         url += "&concat=true"
 
     logging.info("data api URL: ", url)
-    
+
     # Create SSL lookup
     # TODO: Fix SSL cert verification
     ctx = ssl.create_default_context()
@@ -149,50 +149,6 @@ def get_pages(token, page_ids, concat=False):
         httpsConnection.close()
 
     return data
-
-def get_oauth2_token(username, password):
-    # make sure to set the request content-type as application/x-www-form-urlencoded
-    headers = {"Content-type": "application/x-www-form-urlencoded"}
-    data = { "grant_type": "client_credentials",
-             "client_secret": password,
-             "client_id": username }
-    data = urlencode(data)
-
-    # create an SSL context
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
-
-    # make sure the request method is POST
-    host, port = htrc.config.get_oauth2_host_port()
-    oauth2port = htrc.config.get_oauth2_port()
-    oauth2EPRurl = htrc.config.get_oauth2_url()
-    httpsConnection = http.client.HTTPSConnection(host, oauth2port, context=ctx)
-    httpsConnection.request("POST", oauth2EPRurl + "?" + data, "", headers)
-
-    response = httpsConnection.getresponse()
-
-    # if response status is OK
-    if response.status == 200:
-        data = response.read().decode('utf8')
-
-        jsonData = json.loads(data)
-        logging.info("*** JSON: {}".format(jsonData))
-
-        token = jsonData["access_token"]
-        logging.info("*** parsed token: {}".format(token))
-
-    else:
-        logging.debug("Unable to get token")
-        logging.debug("Response Code: {}".format(response.status))
-        logging.debug("Response: {}".format(response.reason))
-        logging.debug(response.read())
-        raise EnvironmentError("Unable to get token.")
-
-    if httpsConnection is not None:
-        httpsConnection.close()
-
-    return token
 
 
 def download_volumes(volume_ids, output_dir, username=None, password=None,

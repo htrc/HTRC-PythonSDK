@@ -19,7 +19,8 @@ import os, os.path
 from zipfile import ZipFile  # used to decompress requested zip archives.
 
 from htrc.lib.cli import bool_prompt
-from htrc.config import credential_prompt, save_credentials
+from htrc.config import save_credentials
+from htrc.auth import credential_prompt
 
 EXAMPLE_FILE = os.path.join(os.path.dirname(__file__), 'example.zip')
 
